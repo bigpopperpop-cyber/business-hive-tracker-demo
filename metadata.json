@@ -1,0 +1,8 @@
+{
+  "name": "Clinical Hive Tracker | Professional Demo",
+  "description": "A white-label clinical tracking and analysis utility for chronic hives (urticaria), featuring medical-grade severity reports, body location analytics, and secure local data management for patient-clinic integration.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ]
+}
