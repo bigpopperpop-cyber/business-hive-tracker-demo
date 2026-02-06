@@ -1,9 +1,10 @@
+
 export type BodyArea = string;
 
 export interface WeatherData {
   temp: number;
   humidity: number;
-  pollenLevel?: string;
+  pollenLevel?: string; // Descriptive string: e.g. "High (Birch, Grass)"
   condition?: string;
 }
 

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { BodyArea, HiveEntry, WeatherData } from '../types';
 import { DEFAULT_BODY_AREAS, DEFAULT_COMMON_TRIGGERS, CUSTOM_TRIGGERS_KEY, CUSTOM_BODY_AREAS_KEY } from '../constants';
@@ -50,16 +51,24 @@ const HiveForm: React.FC<HiveFormProps> = ({ onAdd, initialData, onCancel }) => 
   }, []);
 
   const summarizePollen = (data: any): string => {
-    const values = [
-      data.birch_pollen || 0,
-      data.grass_pollen || 0,
-      data.ragweed_pollen || 0,
-      data.alder_pollen || 0
+    const types = [
+      { name: 'Birch', val: data.birch_pollen || 0 },
+      { name: 'Grass', val: data.grass_pollen || 0 },
+      { name: 'Ragweed', val: data.ragweed_pollen || 0 },
+      { name: 'Alder', val: data.alder_pollen || 0 }
     ];
-    const maxVal = Math.max(...values);
-    if (maxVal > 50) return 'High';
-    if (maxVal > 10) return 'Moderate';
-    return 'Low';
+    
+    const maxVal = Math.max(...types.map(t => t.val));
+    const activeTypes = types
+      .filter(t => t.val > 10) // Threshold for "detectable"
+      .map(t => t.name)
+      .join(', ');
+
+    let level = 'Low';
+    if (maxVal > 50) level = 'High';
+    else if (maxVal > 15) level = 'Moderate';
+
+    return activeTypes ? `${level} (${activeTypes})` : level;
   };
 
   const fetchWeather = () => {
@@ -286,9 +295,9 @@ const HiveForm: React.FC<HiveFormProps> = ({ onAdd, initialData, onCancel }) => 
                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" /></svg>
                         <span className="text-[10px] font-bold uppercase tracking-tight">{weather.temp}°C / {weather.humidity}%</span>
                       </div>
-                      <div className="flex items-center justify-center space-x-1 mt-0.5">
-                        <svg className="w-3 h-3 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.286-6.857L1 12l7.714-2.143L11 3z" /></svg>
-                        <span className="text-[9px] font-black uppercase text-emerald-600 dark:text-emerald-400">Pollen: {weather.pollenLevel}</span>
+                      <div className="flex items-center justify-center space-x-1 mt-0.5 px-2 overflow-hidden text-ellipsis whitespace-nowrap">
+                        <svg className="w-3 h-3 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.286-6.857L1 12l7.714-2.143L11 3z" /></svg>
+                        <span className="text-[9px] font-black uppercase text-emerald-600 dark:text-emerald-400 truncate">Pollen: {weather.pollenLevel}</span>
                       </div>
                     </div>
                   ) : (
