@@ -55,13 +55,15 @@ const HiveForm: React.FC<HiveFormProps> = ({ onAdd, initialData, onCancel }) => 
       { name: 'Birch', val: Math.round(data.birch_pollen?.[hourIndex] || 0) },
       { name: 'Grass', val: Math.round(data.grass_pollen?.[hourIndex] || 0) },
       { name: 'Ragweed', val: Math.round(data.ragweed_pollen?.[hourIndex] || 0) },
-      { name: 'Alder', val: Math.round(data.alder_pollen?.[hourIndex] || 0) }
+      { name: 'Alder', val: Math.round(data.alder_pollen?.[hourIndex] || 0) },
+      { name: 'Mugwort', val: Math.round(data.mugwort_pollen?.[hourIndex] || 0) },
+      { name: 'Olive', val: Math.round(data.olive_pollen?.[hourIndex] || 0) }
     ];
     
     const maxVal = Math.max(...types.map(t => t.val));
     const activeTypes = types
       .filter(t => t.val > 5) // Lower threshold for "detectable" counts
-      .map(t => `${t.name}: ${t.val}`)
+      .map(t => t.name)
       .join(', ');
 
     let level = 'Low';
@@ -87,7 +89,7 @@ const HiveForm: React.FC<HiveFormProps> = ({ onAdd, initialData, onCancel }) => 
 
         // Historical weather for past dates and forecast for future/today
         const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,relative_humidity_2m,weather_code&start_date=${dateStr}&end_date=${dateStr}`;
-        const airQualityUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${latitude}&longitude=${longitude}&hourly=birch_pollen,grass_pollen,ragweed_pollen,alder_pollen&start_date=${dateStr}&end_date=${dateStr}`;
+        const airQualityUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${latitude}&longitude=${longitude}&hourly=birch_pollen,grass_pollen,ragweed_pollen,alder_pollen,mugwort_pollen,olive_pollen&start_date=${dateStr}&end_date=${dateStr}`;
 
         const [wRes, aRes] = await Promise.all([fetch(weatherUrl), fetch(airQualityUrl)]);
         const wData = await wRes.json();
